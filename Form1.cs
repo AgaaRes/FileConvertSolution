@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using Spire.Pdf;
 
 namespace FileConverterGUI.Converters
 {
@@ -13,10 +14,10 @@ namespace FileConverterGUI.Converters
             InitializeComponent();
         }
 
-        private void btnChooseFile_Click(object sender, EventArgs e)
+        private void BtnChooseFile_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "All supported files|*.docx;*.txt";
+            using OpenFileDialog dialog = new();
+            dialog.Filter = "All supported files|*.docx;*.txt;*.pdf";
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -25,39 +26,64 @@ namespace FileConverterGUI.Converters
             }
         }
 
-        private void btnConvert_Click(object sender, EventArgs e)
+        private void BtnConvert_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(selectedFile))
             {
                 MessageBox.Show("Vui lòng chọn file trước.");
                 return;
             }
+            if (!File.Exists(selectedFile))
+            {
+                MessageBox.Show("File không tồn tại.");
+                return;
+            }
+            string outputDir;
+            using (FolderBrowserDialog folderDialog = new ())
+            {
+                folderDialog.Description = "Chọn thư mục lưu file chuyển đổi";
+                folderDialog.ShowNewFolderButton = true;
 
-            string outputDir = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "ConvertedFiles"
-            );
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    outputDir = folderDialog.SelectedPath;
+                }
+                else
+                {
+                    MessageBox.Show("Bạn chưa chọn thư mục lưu file.");
+                    return;
+                }
+            }
+            if (cbConvertType.SelectedItem is not string convertType || string.IsNullOrEmpty(convertType))
+            {
+                MessageBox.Show("Vui lòng chọn loại chuyển đổi.");
+                return;
+            }
 
-            Directory.CreateDirectory(outputDir);
-
-            string outputFile = Path.Combine(
-                outputDir,
-                Path.GetFileNameWithoutExtension(selectedFile) + ".pdf"
-            );
-
+            string outputFile = convertType switch
+            {
+                "DOCX → PDF" => Path.Combine(outputDir, Path.GetFileNameWithoutExtension(selectedFile) + ".pdf"),
+                "TXT → PDF" => Path.Combine(outputDir, Path.GetFileNameWithoutExtension(selectedFile) + ".pdf"),
+                "PDF → DOCX" => Path.Combine(outputDir, Path.GetFileNameWithoutExtension(selectedFile) + ".docx"),
+                _ => throw new InvalidOperationException("Loại convert không hợp lệ")
+            };
             try
             {
-                switch (cbConvertType.SelectedItem!.ToString())
+                switch (convertType)
                 {
                     case "DOCX → PDF":
                         ConvertDocxToPdf(selectedFile, outputFile);
                         break;
-
+                    case "PDF → DOCX":
+                         ConvertPdfToDocx(selectedFile, outputFile);
+                        break;
                     case "TXT → PDF":
                         ConvertTxtToPdf(selectedFile, outputFile);
                         break;
+                    default:
+                        MessageBox.Show("Loại Chuyển đổi không hợp lệ.");
+                        return;
                 }
-
                 MessageBox.Show($"Convert thành công!\n{outputFile}");
             }
             catch (Exception ex)
@@ -66,22 +92,51 @@ namespace FileConverterGUI.Converters
             }
         }
 
-        private void ConvertDocxToPdf(string input, string output)
+        private static void ConvertDocxToPdf(string input, string output)
         {
-            var doc = new Spire.Doc.Document();
-            doc.LoadFromFile(input);
-            doc.SaveToFile(output, Spire.Doc.FileFormat.PDF);
+            try
+            {
+                var doc = new Spire.Doc.Document();
+                doc.LoadFromFile(input);
+                doc.SaveToFile(output, Spire.Doc.FileFormat.PDF);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi convert DOCX → PDF: " + ex.Message);
+            }        
         }
 
-        private void ConvertTxtToPdf(string input, string output)
+        private static void ConvertTxtToPdf(string input, string output)
         {
-            string text = File.ReadAllText(input);
+            try
+            {
+                string text = File.ReadAllText(input);
+                var doc = new Spire.Doc.Document();
+                var section = doc.AddSection();
+                section.AddParagraph().AppendText(text);
+                doc.SaveToFile(output, Spire.Doc.FileFormat.PDF);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi convert TXT → PDF: " + ex.Message);
+            }
+            
+        }
+        private static void ConvertPdfToDocx(string input, string output)
+        {
+            try
+            {
+                // Load PDF
+                PdfDocument pdf = new();
+                pdf.LoadFromFile(input);
 
-            var doc = new Spire.Doc.Document();
-            var section = doc.AddSection();
-            section.AddParagraph().AppendText(text);
-
-            doc.SaveToFile(output, Spire.Doc.FileFormat.PDF);
+                // Lưu sang DOCX
+                pdf.SaveToFile(output, FileFormat.DOCX);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi convert PDF → DOCX: " + ex.Message);
+            }
         }
     }
 }

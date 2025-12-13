@@ -6,100 +6,82 @@ namespace FileConverterGUI.Converters
 {
     public partial class Form1 : Form
     {
+        private string? selectedFile;
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void btnSelectFile_Click(object sender, EventArgs e)
+        private void btnChooseFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter =
-                "Word Files (*.docx)|*.docx|Text Files (*.txt)|*.txt|Image Files (*.jpg;*.png;*.jpeg)|*.jpg;*.png;*.jpeg|All Files (*.*)|*.*";
+            dialog.Filter = "All supported files|*.docx;*.txt";
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                ConvertFile(dialog.FileName);
+                selectedFile = dialog.FileName;
+                lblFile.Text = Path.GetFileName(selectedFile);
             }
         }
 
-        private void ConvertFile(string filePath)
+        private void btnConvert_Click(object sender, EventArgs e)
         {
-            string ext = Path.GetExtension(filePath).ToLower();
+            if (string.IsNullOrEmpty(selectedFile))
+            {
+                MessageBox.Show("Vui lòng chọn file trước.");
+                return;
+            }
 
-            // Tự tạo thư mục output trong Documents
-            string outputFolder = Path.Combine(
+            string outputDir = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "ConvertedFiles"
             );
 
-            if (!Directory.Exists(outputFolder))
-                Directory.CreateDirectory(outputFolder);
+            Directory.CreateDirectory(outputDir);
 
             string outputFile = Path.Combine(
-                outputFolder,
-                Path.GetFileNameWithoutExtension(filePath) + ".pdf"
+                outputDir,
+                Path.GetFileNameWithoutExtension(selectedFile) + ".pdf"
             );
 
             try
             {
-                switch (ext)
+                switch (cbConvertType.SelectedItem!.ToString())
                 {
-                    case ".docx":
-                        ConvertDocxToPdf(filePath, outputFile);
+                    case "DOCX → PDF":
+                        ConvertDocxToPdf(selectedFile, outputFile);
                         break;
 
-                    case ".txt":
-                        ConvertTxtToPdf(filePath, outputFile);
-                        break;
-
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".png":
-                        ConvertImageToPdf(filePath, outputFile);
-                        break;
-
-                    default:
-                        MessageBox.Show("Loại file không hỗ trợ.");
+                    case "TXT → PDF":
+                        ConvertTxtToPdf(selectedFile, outputFile);
                         break;
                 }
+
+                MessageBox.Show($"Convert thành công!\n{outputFile}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi: {ex.Message}");
+                MessageBox.Show("Lỗi: " + ex.Message);
             }
         }
 
-        private void ConvertDocxToPdf(string filePath, string outFile)
+        private void ConvertDocxToPdf(string input, string output)
         {
             var doc = new Spire.Doc.Document();
-            doc.LoadFromFile(filePath);
-            doc.SaveToFile(outFile, Spire.Doc.FileFormat.PDF);
-            MessageBox.Show($"Đã tạo PDF tại:\n{outFile}");
+            doc.LoadFromFile(input);
+            doc.SaveToFile(output, Spire.Doc.FileFormat.PDF);
         }
 
-        private void ConvertTxtToPdf(string filePath, string outFile)
+        private void ConvertTxtToPdf(string input, string output)
         {
-            string text = File.ReadAllText(filePath);
+            string text = File.ReadAllText(input);
 
             var doc = new Spire.Doc.Document();
             var section = doc.AddSection();
             section.AddParagraph().AppendText(text);
 
-            doc.SaveToFile(outFile, Spire.Doc.FileFormat.PDF);
-            MessageBox.Show($"Đã tạo PDF tại:\n{outFile}");
-        }
-
-        private void ConvertImageToPdf(string filePath, string outFile)
-        {
-            var pdf = new Spire.Pdf.PdfDocument();
-            var page = pdf.Pages.Add();
-
-            var img = Spire.Pdf.Graphics.PdfImage.FromFile(filePath);
-            page.Canvas.DrawImage(img, 0, 0, img.Width, img.Height);
-
-            pdf.SaveToFile(outFile);
-            MessageBox.Show($"Đã tạo PDF tại:\n{outFile}");
+            doc.SaveToFile(output, Spire.Doc.FileFormat.PDF);
         }
     }
 }

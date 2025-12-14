@@ -16,7 +16,6 @@ public class TextToPdfConverter : IFileConverter
         string fileName = Path.GetFileNameWithoutExtension(inputPath);
         string outputFile = Path.Combine(outputDir, fileName + ".pdf");
 
-        // Dùng fully-qualified name để tránh đụng PDFSharp
         using (var writer = new iText.Kernel.Pdf.PdfWriter(outputFile))
         using (var pdfDoc = new iText.Kernel.Pdf.PdfDocument(writer))
         using (var document = new Document(pdfDoc))

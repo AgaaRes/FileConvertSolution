@@ -29,7 +29,7 @@ namespace FileConverterGUI.Converters
 
         private void cbConvertType_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            // Reset file khi đổi kiểu convert
+           
             selectedFile = null;
             lblFile.Text = "Chưa chọn file";
         }

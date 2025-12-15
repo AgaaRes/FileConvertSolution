@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using Spire.Pdf;
 
 namespace FileConverterGUI.Converters
 {
@@ -11,36 +12,41 @@ namespace FileConverterGUI.Converters
         public Form1()
         {
             InitializeComponent();
-
             Load += Form1_Load;
-            cbConvertType.SelectedIndexChanged += cbConvertType_SelectedIndexChanged;
+            cbConvertType.SelectedIndexChanged += CbConvertType_SelectedIndexChanged;
         }
 
         private void Form1_Load(object? sender, EventArgs e)
         {
             cbConvertType.Items.Clear();
+
             cbConvertType.Items.Add("IMAGE → JPG");
             cbConvertType.Items.Add("DOCX → PDF");
             cbConvertType.Items.Add("TXT → PDF");
-            cbConvertType.SelectedIndex = 0;
+            cbConvertType.Items.Add("PDF → DOCX");
+
+            cbConvertType.SelectedIndex = -1;
 
             lblFile.Text = "Chưa chọn file";
         }
 
-        private void cbConvertType_SelectedIndexChanged(object? sender, EventArgs e)
+        private void CbConvertType_SelectedIndexChanged(object? sender, EventArgs e)
         {
-           
             selectedFile = null;
             lblFile.Text = "Chưa chọn file";
         }
 
-        private void btnChooseFile_Click(object sender, EventArgs e)
+        private void BtnChooseFile_Click(object sender, EventArgs e)
         {
-            using OpenFileDialog dialog = new OpenFileDialog
+            if (cbConvertType.SelectedItem is not string convertType)
             {
-                Filter = GetDialogFilter(),
-                Multiselect = false
-            };
+                MessageBox.Show("Vui lòng chọn loại chuyển đổi trước.");
+                return;
+            }
+
+            using OpenFileDialog dialog = new();
+            dialog.Multiselect = false;
+            dialog.Filter = GetDialogFilter(convertType);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -49,73 +55,83 @@ namespace FileConverterGUI.Converters
             }
         }
 
-        private string GetDialogFilter()
+        private static string GetDialogFilter(string convertType)
         {
-            return cbConvertType.SelectedItem!.ToString() switch
+            return convertType switch
             {
                 "IMAGE → JPG" => "Image files|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.webp",
                 "DOCX → PDF" => "Word files|*.docx",
                 "TXT → PDF" => "Text files|*.txt",
+                "PDF → DOCX" => "PDF files|*.pdf",
                 _ => "All files|*.*"
             };
         }
 
-        private void btnConvert_Click(object sender, EventArgs e)
+        private void BtnConvert_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(selectedFile))
+            if (cbConvertType.SelectedItem is not string convertType)
             {
-                MessageBox.Show("Vui lòng chọn file trước.");
+                MessageBox.Show("Vui lòng chọn loại chuyển đổi.");
                 return;
             }
 
-            string outputDir = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "ConvertedFiles"
-            );
+            if (string.IsNullOrEmpty(selectedFile) || !File.Exists(selectedFile))
+            {
+                MessageBox.Show("Vui lòng chọn file hợp lệ.");
+                return;
+            }
 
-            Directory.CreateDirectory(outputDir);
+            string outputDir;
+            using (FolderBrowserDialog folderDialog = new())
+            {
+                folderDialog.Description = "Chọn thư mục lưu file chuyển đổi";
+                folderDialog.ShowNewFolderButton = true;
+
+                if (folderDialog.ShowDialog() != DialogResult.OK)
+                {
+                    MessageBox.Show("Bạn chưa chọn thư mục lưu file.");
+                    return;
+                }
+
+                outputDir = folderDialog.SelectedPath;
+            }
+
+            string outputFile = convertType switch
+            {
+                "IMAGE → JPG" => Path.Combine(outputDir,
+                    Path.GetFileNameWithoutExtension(selectedFile) + ".jpg"),
+
+                "DOCX → PDF" or "TXT → PDF" => Path.Combine(outputDir,
+                    Path.GetFileNameWithoutExtension(selectedFile) + ".pdf"),
+
+                "PDF → DOCX" => Path.Combine(outputDir,
+                    Path.GetFileNameWithoutExtension(selectedFile) + ".docx"),
+
+                _ => throw new InvalidOperationException("Loại convert không hợp lệ")
+            };
 
             try
             {
-                string convertType = cbConvertType.SelectedItem!.ToString()!;
-                string outputPath;
-
                 switch (convertType)
                 {
                     case "IMAGE → JPG":
-                        outputPath = Path.Combine(
-                            outputDir,
-                            Path.GetFileNameWithoutExtension(selectedFile) + ".jpg"
-                        );
-
-                        new ImageToJpgConverter()
-                            .Convert(selectedFile, outputPath);
+                        new ImageToJpgConverter().Convert(selectedFile, outputFile);
                         break;
 
                     case "DOCX → PDF":
-                        outputPath = Path.Combine(
-                            outputDir,
-                            Path.GetFileNameWithoutExtension(selectedFile) + ".pdf"
-                        );
-
-                        ConvertDocxToPdf(selectedFile, outputPath);
+                        ConvertDocxToPdf(selectedFile, outputFile);
                         break;
 
                     case "TXT → PDF":
-                        outputPath = Path.Combine(
-                            outputDir,
-                            Path.GetFileNameWithoutExtension(selectedFile) + ".pdf"
-                        );
-
-                        ConvertTxtToPdf(selectedFile, outputPath);
+                        ConvertTxtToPdf(selectedFile, outputFile);
                         break;
 
-                    default:
-                        MessageBox.Show("Kiểu chuyển đổi không hợp lệ.");
-                        return;
+                    case "PDF → DOCX":
+                        ConvertPdfToDocx(selectedFile, outputFile);
+                        break;
                 }
 
-                MessageBox.Show("Convert thành công!");
+                MessageBox.Show($"Convert thành công!\n{outputFile}");
             }
             catch (Exception ex)
             {
@@ -123,22 +139,27 @@ namespace FileConverterGUI.Converters
             }
         }
 
-        private void ConvertDocxToPdf(string inputPath, string outputPath)
+        private static void ConvertDocxToPdf(string input, string output)
         {
             var doc = new Spire.Doc.Document();
-            doc.LoadFromFile(inputPath);
-            doc.SaveToFile(outputPath, Spire.Doc.FileFormat.PDF);
+            doc.LoadFromFile(input);
+            doc.SaveToFile(output, Spire.Doc.FileFormat.PDF);
         }
 
-        private void ConvertTxtToPdf(string inputPath, string outputPath)
+        private static void ConvertTxtToPdf(string input, string output)
         {
-            string text = File.ReadAllText(inputPath);
-
+            string text = File.ReadAllText(input);
             var doc = new Spire.Doc.Document();
             var section = doc.AddSection();
             section.AddParagraph().AppendText(text);
+            doc.SaveToFile(output, Spire.Doc.FileFormat.PDF);
+        }
 
-            doc.SaveToFile(outputPath, Spire.Doc.FileFormat.PDF);
+        private static void ConvertPdfToDocx(string input, string output)
+        {
+            PdfDocument pdf = new();
+            pdf.LoadFromFile(input);
+            pdf.SaveToFile(output, FileFormat.DOCX);
         }
     }
 }

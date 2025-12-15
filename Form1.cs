@@ -20,7 +20,6 @@ namespace FileConverterGUI.Converters
         {
             cbConvertType.Items.Clear();
             cbConvertType.Items.Add("IMAGE → JPG");
-            cbConvertType.Items.Add("DOCX → PDF");
             cbConvertType.Items.Add("TXT → PDF");
             cbConvertType.Items.Add("PDF → DOCX");
             cbConvertType.Items.Add("PPT → PDF");
@@ -50,7 +49,6 @@ namespace FileConverterGUI.Converters
                 Filter = convertType switch
                 {
                     "IMAGE → JPG" => "Image files|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.webp",
-                    "DOCX → PDF" => "Word files|*.docx",
                     "TXT → PDF" => "Text files|*.txt",
                     "PDF → DOCX" => "PDF files|*.pdf",
                     "PPT → PDF" => "PowerPoint files|*.ppt;*.pptx",
@@ -100,7 +98,6 @@ namespace FileConverterGUI.Converters
                 IFileConverter converter = convertType switch
                 {
                     "IMAGE → JPG" => new ImageToJpgConverter(),
-                    "DOCX → PDF" => new WordToPdfConverter(),
                     "TXT → PDF" => new TextToPdfConverter(),
                     "PDF → DOCX" => new PdfToDocxConverter(),
                     "PPT → PDF" => new PptToPdfConverter(),

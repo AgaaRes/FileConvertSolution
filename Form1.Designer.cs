@@ -70,6 +70,7 @@ namespace FileConverterGUI.Converters
             Controls.Add(lblFile);
             Controls.Add(BtnConvert);
             Name = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "File Converter";
             ResumeLayout(false);
             PerformLayout();

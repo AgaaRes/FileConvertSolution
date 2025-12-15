@@ -7,7 +7,7 @@ namespace FileConverterGUI.Converters
     {
         public string Convert(string inputPath, string outputPath)
         {
-            Workbook wb = new Workbook();
+            Workbook wb = new();
             wb.LoadFromFile(inputPath);
             wb.SaveToFile(outputPath, Spire.Xls.FileFormat.PDF);
 

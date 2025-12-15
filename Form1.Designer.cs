@@ -27,20 +27,20 @@ namespace FileConverterGUI.Converters
             SuspendLayout();
              
             cbConvertType.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbConvertType.Items.AddRange(new object[] { ".DOCX -> .PDF", ".TXT -> .PDF", "JPEG / JFIF -> JPG", "PPT -> PDF", "PDF -> DOCX" });
-            cbConvertType.Location = new Point(40, 22);
+            cbConvertType.Items.AddRange(new object[] { "DOCX -> PDF", "TXT -> PDF", "JPEG / JFIF -> JPG", "PPT -> PDF", "PDF -> DOCX", "EXCEL -> PDF" });
+            cbConvertType.Location = new Point(50, 22);
             cbConvertType.Name = "cbConvertType";
-            cbConvertType.Size = new Size(200, 28);
+            cbConvertType.Size = new Size(200, 50);
             cbConvertType.TabIndex = 0;
             
-            BtnChooseFile.Location = new Point(12, 69);
+            BtnChooseFile.Location = new Point(17, 69);
             BtnChooseFile.Name = "BtnChooseFile";
-            BtnChooseFile.Size = new Size(258, 57);
+            BtnChooseFile.Size = new Size(260, 57);
             BtnChooseFile.TabIndex = 1;
             BtnChooseFile.Text = "Chọn file";
             BtnChooseFile.Click += BtnChooseFile_Click;
              
-            BtnConvert.Location = new Point(40, 180);
+            BtnConvert.Location = new Point(50, 180);
             BtnConvert.Name = "BtnConvert";
             BtnConvert.Size = new Size(200, 40);
             BtnConvert.TabIndex = 3;
@@ -48,7 +48,7 @@ namespace FileConverterGUI.Converters
             BtnConvert.Click += BtnConvert_Click;
             
             lblFile.AutoSize = true;
-            lblFile.Location = new Point(98, 129);
+            lblFile.Location = new Point(105, 129);
             lblFile.Name = "lblFile";
             lblFile.Size = new Size(104, 20);
             lblFile.TabIndex = 2;

@@ -1,7 +1,10 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Windows.Forms;
+
+using Spire.Doc;
 using Spire.Pdf;
+using Spire.Presentation;
 
 namespace FileConverterGUI.Converters
 {
@@ -24,9 +27,9 @@ namespace FileConverterGUI.Converters
             cbConvertType.Items.Add("DOCX → PDF");
             cbConvertType.Items.Add("TXT → PDF");
             cbConvertType.Items.Add("PDF → DOCX");
+            cbConvertType.Items.Add("PPT → PDF");
 
             cbConvertType.SelectedIndex = -1;
-
             lblFile.Text = "Chưa chọn file";
         }
 
@@ -44,9 +47,11 @@ namespace FileConverterGUI.Converters
                 return;
             }
 
-            using OpenFileDialog dialog = new();
-            dialog.Multiselect = false;
-            dialog.Filter = GetDialogFilter(convertType);
+            using OpenFileDialog dialog = new OpenFileDialog
+            {
+                Multiselect = false,
+                Filter = GetDialogFilter(convertType)
+            };
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -63,6 +68,7 @@ namespace FileConverterGUI.Converters
                 "DOCX → PDF" => "Word files|*.docx",
                 "TXT → PDF" => "Text files|*.txt",
                 "PDF → DOCX" => "PDF files|*.pdf",
+                "PPT → PDF" => "PowerPoint files|*.ppt;*.pptx",
                 _ => "All files|*.*"
             };
         }
@@ -75,21 +81,21 @@ namespace FileConverterGUI.Converters
                 return;
             }
 
-            if (string.IsNullOrEmpty(selectedFile) || !File.Exists(selectedFile))
+            if (string.IsNullOrWhiteSpace(selectedFile) || !File.Exists(selectedFile))
             {
                 MessageBox.Show("Vui lòng chọn file hợp lệ.");
                 return;
             }
 
             string outputDir;
-            using (FolderBrowserDialog folderDialog = new())
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
             {
-                folderDialog.Description = "Chọn thư mục lưu file chuyển đổi";
+                folderDialog.Description = "Chọn thư mục lưu file sau khi chuyển đổi";
                 folderDialog.ShowNewFolderButton = true;
 
                 if (folderDialog.ShowDialog() != DialogResult.OK)
                 {
-                    MessageBox.Show("Bạn chưa chọn thư mục lưu file.");
+                    MessageBox.Show("Bạn chưa chọn thư mục lưu.");
                     return;
                 }
 
@@ -98,16 +104,22 @@ namespace FileConverterGUI.Converters
 
             string outputFile = convertType switch
             {
-                "IMAGE → JPG" => Path.Combine(outputDir,
-                    Path.GetFileNameWithoutExtension(selectedFile) + ".jpg"),
+                "IMAGE → JPG" => Path.Combine(
+                    outputDir,
+                    Path.GetFileNameWithoutExtension(selectedFile) + ".jpg"
+                ),
 
-                "DOCX → PDF" or "TXT → PDF" => Path.Combine(outputDir,
-                    Path.GetFileNameWithoutExtension(selectedFile) + ".pdf"),
+                "DOCX → PDF" or "TXT → PDF" or "PPT → PDF" => Path.Combine(
+                    outputDir,
+                    Path.GetFileNameWithoutExtension(selectedFile) + ".pdf"
+                ),
 
-                "PDF → DOCX" => Path.Combine(outputDir,
-                    Path.GetFileNameWithoutExtension(selectedFile) + ".docx"),
+                "PDF → DOCX" => Path.Combine(
+                    outputDir,
+                    Path.GetFileNameWithoutExtension(selectedFile) + ".docx"
+                ),
 
-                _ => throw new InvalidOperationException("Loại convert không hợp lệ")
+                _ => throw new InvalidOperationException("Loại chuyển đổi không hợp lệ")
             };
 
             try
@@ -129,6 +141,10 @@ namespace FileConverterGUI.Converters
                     case "PDF → DOCX":
                         ConvertPdfToDocx(selectedFile, outputFile);
                         break;
+
+                    case "PPT → PDF":
+                        ConvertPptToPdf(selectedFile, outputFile);
+                        break;
                 }
 
                 MessageBox.Show($"Convert thành công!\n{outputFile}");
@@ -149,17 +165,29 @@ namespace FileConverterGUI.Converters
         private static void ConvertTxtToPdf(string input, string output)
         {
             string text = File.ReadAllText(input);
+
             var doc = new Spire.Doc.Document();
             var section = doc.AddSection();
             section.AddParagraph().AppendText(text);
+
             doc.SaveToFile(output, Spire.Doc.FileFormat.PDF);
         }
 
         private static void ConvertPdfToDocx(string input, string output)
         {
-            PdfDocument pdf = new();
+            PdfDocument pdf = new PdfDocument();
             pdf.LoadFromFile(input);
-            pdf.SaveToFile(output, FileFormat.DOCX);
+            pdf.SaveToFile(output, Spire.Pdf.FileFormat.DOCX);
+        }
+
+        private static void ConvertPptToPdf(string input, string output)
+        {
+            var presentation = new Spire.Presentation.Presentation();
+            presentation.LoadFromFile(input);
+            presentation.SaveToFile(
+                output,
+                Spire.Presentation.FileFormat.PDF
+            );
         }
     }
 }

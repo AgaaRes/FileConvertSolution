@@ -51,7 +51,7 @@ namespace FileConverterGUI.Converters
                 return;
             }
 
-            using OpenFileDialog dialog = new OpenFileDialog
+            using OpenFileDialog dialog = new()
             {
                 Multiselect = false,
                 Filter = GetDialogFilter(convertType)
@@ -94,7 +94,7 @@ namespace FileConverterGUI.Converters
             }
 
             string outputDir;
-            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+            using (FolderBrowserDialog folderDialog = new())
             {
                 folderDialog.Description = "Chọn thư mục lưu file sau khi chuyển đổi";
                 folderDialog.ShowNewFolderButton = true;
@@ -191,7 +191,7 @@ namespace FileConverterGUI.Converters
 
         private static void ConvertPdfToDocx(string input, string output)
         {
-            PdfDocument pdf = new PdfDocument();
+            PdfDocument pdf = new();
             pdf.LoadFromFile(input);
             pdf.SaveToFile(output, Spire.Pdf.FileFormat.DOCX);
         }
@@ -205,7 +205,7 @@ namespace FileConverterGUI.Converters
 
         private static void ConvertPdfToJpg(string inputPdf, string outputDir)
         {
-            using PdfDocument pdf = new PdfDocument();
+            using PdfDocument pdf = new();
             pdf.LoadFromFile(inputPdf);
 
             string baseName = Path.GetFileNameWithoutExtension(inputPdf);
@@ -224,7 +224,7 @@ namespace FileConverterGUI.Converters
 
         private static void ConvertExcelToPdf(string input, string output)
         {
-            Workbook workbook = new Workbook();
+            Workbook workbook = new();
             workbook.LoadFromFile(input);
             workbook.SaveToFile(output, Spire.Xls.FileFormat.PDF);
         }

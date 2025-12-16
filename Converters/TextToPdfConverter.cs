@@ -1,29 +1,30 @@
-﻿using FileConverterGUI.Converters;
-using iText.Layout;
+﻿using iText.Layout;
 using iText.Layout.Element;
-using System;
 using System.IO;
 
-public class TextToPdfConverter : IFileConverter
+namespace FileConverterGUI.Converters
 {
-    public string Convert(string inputPath, string outputDir)
+    public class TextToPdfConverter : IFileConverter
     {
-        if (!File.Exists(inputPath))
-            throw new FileNotFoundException("Input file not found.", inputPath);
-
-        Directory.CreateDirectory(outputDir);
-
-        string fileName = Path.GetFileNameWithoutExtension(inputPath);
-        string outputFile = Path.Combine(outputDir, fileName + ".pdf");
-
-        using (var writer = new iText.Kernel.Pdf.PdfWriter(outputFile))
-        using (var pdfDoc = new iText.Kernel.Pdf.PdfDocument(writer))
-        using (var document = new Document(pdfDoc))
+        public string Convert(string inputPath, string outputDir)
         {
-            string text = File.ReadAllText(inputPath);
-            document.Add(new Paragraph(text));
-        }
+            if (!File.Exists(inputPath))
+                throw new FileNotFoundException("Input file not found.", inputPath);
 
-        return outputFile;
+            Directory.CreateDirectory(outputDir);
+
+            string fileName = Path.GetFileNameWithoutExtension(inputPath);
+            string outputFile = Path.Combine(outputDir, fileName + ".pdf");
+
+            using (var writer = new iText.Kernel.Pdf.PdfWriter(outputFile))
+            using (var pdfDoc = new iText.Kernel.Pdf.PdfDocument(writer))
+            using (var document = new Document(pdfDoc))
+            {
+                string text = File.ReadAllText(inputPath);
+                document.Add(new Paragraph(text));
+            }
+
+            return outputFile;
+        }
     }
 }

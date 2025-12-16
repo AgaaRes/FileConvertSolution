@@ -12,29 +12,7 @@ namespace FileConverterGUI.Converters
         public Form1()
         {
             InitializeComponent();
-            Load += Form1_Load;
-            cbConvertType.SelectedIndexChanged += CbConvertType_SelectedIndexChanged;
         }
-
-        private void Form1_Load(object? sender, EventArgs e)
-        {
-            cbConvertType.Items.Clear();
-            cbConvertType.Items.Add("IMAGE → JPG");
-            cbConvertType.Items.Add("TXT → PDF");
-            cbConvertType.Items.Add("PDF → DOCX");
-            cbConvertType.Items.Add("PPT → PDF");
-            cbConvertType.Items.Add("WORD → PDF"); // hoặc Excel → PDF
-            cbConvertType.Items.Add("PDF → JPG");
-            cbConvertType.SelectedIndex = -1;
-            lblFile.Text = "Chưa chọn file";
-        }
-
-        private void CbConvertType_SelectedIndexChanged(object? sender, EventArgs e)
-        {
-            selectedFile = null;
-            lblFile.Text = "Chưa chọn file";
-        }
-
         private void BtnChooseFile_Click(object sender, EventArgs e)
         {
             if (cbConvertType.SelectedItem is not string convertType)
@@ -54,6 +32,7 @@ namespace FileConverterGUI.Converters
                     "PPT → PDF" => "PowerPoint files|*.ppt;*.pptx",
                     "WORD → PDF" => "Word files|*.docx",
                     "PDF → JPG" => "PDF files|*.pdf",
+                    "EXCEL → PDF" => "Excel files|*.xls;*.xlsx",
                     _ => "All files|*.*"
                 }
             };
@@ -104,6 +83,7 @@ namespace FileConverterGUI.Converters
                     "PPT → PDF" => new PptToPdfConverter(),
                     "WORD → PDF" => new WordToPdfConverter(),
                     "PDF → JPG" => new PdfToJpgConverter(),
+                    "EXCEL → PDF" => new ExcelToPdfConverter(),
                     _ => throw new InvalidOperationException("Loại convert không hợp lệ")
                 };
 

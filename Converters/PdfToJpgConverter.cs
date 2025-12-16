@@ -7,27 +7,30 @@ namespace FileConverterGUI.Converters
 {
     public class PdfToJpgConverter : IFileConverter
     {
-        public string Convert(string pdfPath, string outputFolder)
+        public string Convert(string pdfPath, string outputDir)
         {
-            if (!Directory.Exists(outputFolder))
-                Directory.CreateDirectory(outputFolder);
+            Directory.CreateDirectory(outputDir);
 
             using PdfDocument doc = PdfDocument.Load(pdfPath);
+
+            string firstImage = "";
 
             for (int i = 0; i < doc.PageCount; i++)
             {
                 using Image img = doc.Render(i, 200, 200, true);
 
                 string outputFile = Path.Combine(
-                    outputFolder,
+                    outputDir,
                     $"page_{i + 1}.jpg"
                 );
 
                 img.Save(outputFile, ImageFormat.Jpeg);
+
+                if (i == 0)
+                    firstImage = outputFile;
             }
 
-            // TRẢ VỀ thư mục chứa kết quả
-            return outputFolder;
+            return firstImage;
         }
     }
 }

@@ -1,20 +1,24 @@
-﻿using FileConverterGUI.Converters;
-using Spire.Presentation;
+﻿using Spire.Presentation;
 using System.IO;
 
-public class PptToPdfConverter : IFileConverter
+namespace FileConverterGUI.Converters
 {
-    public string Convert(string inputPath, string outputDir)
+    public class PptToPdfConverter : IFileConverter
     {
-        Directory.CreateDirectory(outputDir);
+        public string Convert(string inputPath, string outputDir)
+        {
+            Directory.CreateDirectory(outputDir);
 
-        string outFile = Path.Combine(outputDir,
-            Path.GetFileNameWithoutExtension(inputPath) + ".pdf");
+            string outFile = Path.Combine(
+                outputDir,
+                Path.GetFileNameWithoutExtension(inputPath) + ".pdf"
+            );
 
-        Presentation ppt = new Presentation();
-        ppt.LoadFromFile(inputPath);
-        ppt.SaveToFile(outFile, FileFormat.PDF);
+            Presentation ppt = new();
+            ppt.LoadFromFile(inputPath);
+            ppt.SaveToFile(outFile, FileFormat.PDF);
 
-        return outFile;
+            return outFile;
+        }
     }
 }

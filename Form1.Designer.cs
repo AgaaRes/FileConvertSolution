@@ -29,7 +29,7 @@ namespace FileConverterGUI.Converters
             // cbConvertType
             // 
             cbConvertType.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbConvertType.Items.AddRange(new object[] { ".DOCX -> .PDF", ".TXT -> .PDF", "JPEG / JFIF -> JPG" });
+            cbConvertType.Items.AddRange(new object[] { "IMAGE → JPG", "TXT → PDF", "PDF → DOCX", "PDF → JPG", "PPT → PDF", "WORD → PDF", "EXCEL → PDF" });
             cbConvertType.Location = new Point(40, 22);
             cbConvertType.Name = "cbConvertType";
             cbConvertType.Size = new Size(200, 28);

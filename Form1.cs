@@ -24,7 +24,7 @@ namespace FileConverterGUI.Converters
             cbConvertType.Items.Add("PDF → DOCX");
             cbConvertType.Items.Add("PPT → PDF");
             cbConvertType.Items.Add("WORD → PDF"); // hoặc Excel → PDF
-
+            cbConvertType.Items.Add("PDF → JPG");
             cbConvertType.SelectedIndex = -1;
             lblFile.Text = "Chưa chọn file";
         }
@@ -53,6 +53,7 @@ namespace FileConverterGUI.Converters
                     "PDF → DOCX" => "PDF files|*.pdf",
                     "PPT → PDF" => "PowerPoint files|*.ppt;*.pptx",
                     "WORD → PDF" => "Word files|*.docx",
+                    "PDF → JPG" => "PDF files|*.pdf",
                     _ => "All files|*.*"
                 }
             };
@@ -102,6 +103,7 @@ namespace FileConverterGUI.Converters
                     "PDF → DOCX" => new PdfToDocxConverter(),
                     "PPT → PDF" => new PptToPdfConverter(),
                     "WORD → PDF" => new WordToPdfConverter(),
+                    "PDF → JPG" => new PdfToJpgConverter(),
                     _ => throw new InvalidOperationException("Loại convert không hợp lệ")
                 };
 

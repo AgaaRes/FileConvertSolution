@@ -1,17 +1,25 @@
-﻿using FileConverterGUI.Converters;
-using Spire.Xls;
+using Spire.Doc;
+using System.IO;
 
 namespace FileConverterGUI.Converters
 {
     public class WordToPdfConverter : IFileConverter
     {
-        public string Convert(string inputPath, string outputPath)
+        public string Convert(string inputPath, string outputDir)
         {
-            Workbook wb = new Workbook();
-            wb.LoadFromFile(inputPath);
-            wb.SaveToFile(outputPath, Spire.Xls.FileFormat.PDF);
+            
+            Directory.CreateDirectory(outputDir);
 
-            return outputPath;
+            string outputFile = Path.Combine(
+                outputDir,
+                Path.GetFileNameWithoutExtension(inputPath) + ".pdf"
+            );
+
+            Document doc = new Document();
+            doc.LoadFromFile(inputPath);
+            doc.SaveToFile(outputFile, FileFormat.PDF);
+
+            return outputFile;
         }
     }
 }

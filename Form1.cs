@@ -12,6 +12,14 @@ namespace FileConverterGUI.Converters
         public Form1()
         {
             InitializeComponent();
+            picLeft.Visible = true;
+            picRight.Visible = true;
+
+            picLeft.Image = Properties.Resources.files;
+            picRight.Image = Properties.Resources.hoi;
+
+            picLeft.SizeMode = PictureBoxSizeMode.Zoom;
+            picRight.SizeMode = PictureBoxSizeMode.Zoom;
         }
         private void BtnChooseFile_Click(object sender, EventArgs e)
         {
@@ -94,6 +102,62 @@ namespace FileConverterGUI.Converters
             {
                 MessageBox.Show("Lỗi: " + ex.Message);
             }
+        }
+        private void cbConvertType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbConvertType.SelectedItem is not string convertType)
+                return;
+
+            picLeft.Visible = true;
+            picRight.Visible = true;
+
+            switch (convertType)
+            {
+                case "IMAGE → JPG":
+                    picLeft.Image = Properties.Resources.img; // icon image
+                    picRight.Image = Properties.Resources.jpg;
+                    break;
+
+                case "TXT → PDF":
+                    picLeft.Image = Properties.Resources.txt;
+                    picRight.Image = Properties.Resources.pdf;
+                    break;
+
+                case "PDF → DOCX":
+                    picLeft.Image = Properties.Resources.pdf;
+                    picRight.Image = Properties.Resources.docx;
+                    break;
+
+                case "PPT → PDF":
+                    picLeft.Image = Properties.Resources.ppt;
+                    picRight.Image = Properties.Resources.pdf;
+                    break;
+
+                case "WORD → PDF":
+                    picLeft.Image = Properties.Resources.docx;
+                    picRight.Image = Properties.Resources.pdf;
+                    break;
+
+                case "PDF → JPG":
+                    picLeft.Image = Properties.Resources.pdf;
+                    picRight.Image = Properties.Resources.jpg;
+                    break;
+
+                case "EXCEL → PDF":
+                    picLeft.Image = Properties.Resources.xlss;
+                    picRight.Image = Properties.Resources.pdf;
+                    break;
+
+                default:
+                    picLeft.Visible = false;
+                    picRight.Visible = false;
+                    break;
+            }
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

@@ -36,17 +36,23 @@ namespace FileConverterGUI.Converters
             lblTitle = new Label();
             panelHeaderShadow = new Panel();
             panelCard = new Panel();
-            panel2 = new Panel();
-            panel1 = new Panel();
             lblConvertType = new Label();
+            picRight = new PictureBox();
+            picLeft = new PictureBox();
+            picMuiTen = new PictureBox();
             panelShadow = new Panel();
+            panel1 = new Panel();
             panelHeader.SuspendLayout();
             panelCard.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picRight).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picLeft).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picMuiTen).BeginInit();
             SuspendLayout();
             // 
             // cbConvertType
             // 
             cbConvertType.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            cbConvertType.BackColor = Color.White;
             cbConvertType.DropDownStyle = ComboBoxStyle.DropDownList;
             cbConvertType.Font = new Font("Segoe UI", 10F);
             cbConvertType.Items.AddRange(new object[] { "IMAGE → JPG", "TXT → PDF", "PDF → DOCX", "PDF → JPG", "PPT → PDF", "WORD → PDF", "EXCEL → PDF" });
@@ -54,6 +60,7 @@ namespace FileConverterGUI.Converters
             cbConvertType.Name = "cbConvertType";
             cbConvertType.Size = new Size(660, 31);
             cbConvertType.TabIndex = 1;
+            cbConvertType.SelectedIndexChanged += cbConvertType_SelectedIndexChanged;
             // 
             // BtnChooseFile
             // 
@@ -62,7 +69,7 @@ namespace FileConverterGUI.Converters
             BtnChooseFile.FlatAppearance.BorderSize = 0;
             BtnChooseFile.FlatStyle = FlatStyle.Flat;
             BtnChooseFile.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            BtnChooseFile.Location = new Point(230, 120);
+            BtnChooseFile.Location = new Point(227, 102);
             BtnChooseFile.Name = "BtnChooseFile";
             BtnChooseFile.Size = new Size(260, 44);
             BtnChooseFile.TabIndex = 2;
@@ -72,13 +79,13 @@ namespace FileConverterGUI.Converters
             // 
             // BtnConvert
             // 
-            BtnConvert.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            BtnConvert.BackColor = Color.FromArgb(0, 192, 0);
+            BtnConvert.Anchor = AnchorStyles.None;
+            BtnConvert.BackColor = Color.LimeGreen;
             BtnConvert.FlatAppearance.BorderSize = 0;
             BtnConvert.FlatStyle = FlatStyle.Flat;
             BtnConvert.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             BtnConvert.ForeColor = Color.White;
-            BtnConvert.Location = new Point(210, 235);
+            BtnConvert.Location = new Point(205, 258);
             BtnConvert.Name = "BtnConvert";
             BtnConvert.Size = new Size(300, 52);
             BtnConvert.TabIndex = 4;
@@ -89,11 +96,11 @@ namespace FileConverterGUI.Converters
             // lblFile
             // 
             lblFile.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lblFile.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+            lblFile.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             lblFile.ForeColor = Color.FromArgb(107, 114, 128);
-            lblFile.Location = new Point(25, 175);
+            lblFile.Location = new Point(30, 149);
             lblFile.Name = "lblFile";
-            lblFile.Size = new Size(660, 38);
+            lblFile.Size = new Size(660, 30);
             lblFile.TabIndex = 3;
             lblFile.Text = "No file chosen";
             lblFile.TextAlign = ContentAlignment.MiddleCenter;
@@ -145,36 +152,22 @@ namespace FileConverterGUI.Converters
             // panelCard
             // 
             panelCard.Anchor = AnchorStyles.Bottom;
-            panelCard.BackColor = Color.WhiteSmoke;
+            panelCard.BackColor = Color.White;
             panelCard.BorderStyle = BorderStyle.FixedSingle;
-            panelCard.Controls.Add(panel2);
             panelCard.Controls.Add(panel1);
             panelCard.Controls.Add(lblConvertType);
             panelCard.Controls.Add(cbConvertType);
             panelCard.Controls.Add(BtnChooseFile);
+            panelCard.Controls.Add(picRight);
+            panelCard.Controls.Add(picLeft);
             panelCard.Controls.Add(lblFile);
             panelCard.Controls.Add(BtnConvert);
+            panelCard.Controls.Add(picMuiTen);
             panelCard.Location = new Point(90, 110);
             panelCard.Name = "panelCard";
             panelCard.Padding = new Padding(25);
             panelCard.Size = new Size(720, 340);
             panelCard.TabIndex = 0;
-            // 
-            // panel2
-            // 
-            panel2.BackColor = Color.DimGray;
-            panel2.Location = new Point(110, 216);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(500, 1);
-            panel2.TabIndex = 6;
-            // 
-            // panel1
-            // 
-            panel1.BackColor = Color.DimGray;
-            panel1.Location = new Point(160, 100);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(400, 1);
-            panel1.TabIndex = 5;
             // 
             // lblConvertType
             // 
@@ -186,6 +179,36 @@ namespace FileConverterGUI.Converters
             lblConvertType.TabIndex = 0;
             lblConvertType.Text = "Convert type";
             // 
+            // picRight
+            // 
+            picRight.Location = new Point(493, 138);
+            picRight.Name = "picRight";
+            picRight.Size = new Size(97, 117);
+            picRight.SizeMode = PictureBoxSizeMode.Zoom;
+            picRight.TabIndex = 7;
+            picRight.TabStop = false;
+            picRight.Visible = false;
+            // 
+            // picLeft
+            // 
+            picLeft.Location = new Point(133, 138);
+            picLeft.Name = "picLeft";
+            picLeft.Size = new Size(97, 117);
+            picLeft.SizeMode = PictureBoxSizeMode.Zoom;
+            picLeft.TabIndex = 5;
+            picLeft.TabStop = false;
+            picLeft.Visible = false;
+            // 
+            // picMuiTen
+            // 
+            picMuiTen.Image = Properties.Resources.muiten;
+            picMuiTen.Location = new Point(236, 166);
+            picMuiTen.Name = "picMuiTen";
+            picMuiTen.Size = new Size(239, 77);
+            picMuiTen.SizeMode = PictureBoxSizeMode.Zoom;
+            picMuiTen.TabIndex = 8;
+            picMuiTen.TabStop = false;
+            // 
             // panelShadow
             // 
             panelShadow.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -195,11 +218,20 @@ namespace FileConverterGUI.Converters
             panelShadow.Size = new Size(720, 340);
             panelShadow.TabIndex = 1;
             // 
+            // panel1
+            // 
+            panel1.BackColor = Color.Black;
+            panel1.Location = new Point(107, 249);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(500, 1);
+            panel1.TabIndex = 9;
+            panel1.Paint += panel1_Paint;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(120F, 120F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            BackColor = Color.White;
+            BackColor = Color.LightCyan;
             BackgroundImageLayout = ImageLayout.None;
             ClientSize = new Size(882, 473);
             Controls.Add(panelCard);
@@ -217,9 +249,14 @@ namespace FileConverterGUI.Converters
             panelHeader.PerformLayout();
             panelCard.ResumeLayout(false);
             panelCard.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)picRight).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picLeft).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picMuiTen).EndInit();
             ResumeLayout(false);
         }
+        private PictureBox picRight;
+        private PictureBox picLeft;
+        private PictureBox picMuiTen;
         private Panel panel1;
-        private Panel panel2;
     }
 }

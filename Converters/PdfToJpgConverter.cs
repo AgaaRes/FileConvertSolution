@@ -1,4 +1,4 @@
-﻿using PdfiumViewer;
+﻿using Spire.Pdf;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -7,30 +7,33 @@ namespace FileConverterGUI.Converters
 {
     public class PdfToJpgConverter : IFileConverter
     {
-        public string Convert(string pdfPath, string outputDir)
+        public string Convert(string inputPdf, string outputDir)
         {
-            Directory.CreateDirectory(outputDir);
+            if (!Directory.Exists(outputDir))
+                Directory.CreateDirectory(outputDir);
 
-            using PdfDocument doc = PdfDocument.Load(pdfPath);
+            using PdfDocument pdf = new();
+            pdf.LoadFromFile(inputPdf);
 
+            string baseName = Path.GetFileNameWithoutExtension(inputPdf);
             string firstImage = "";
 
-            for (int i = 0; i < doc.PageCount; i++)
+            for (int i = 0; i < pdf.Pages.Count; i++)
             {
-                using Image img = doc.Render(i, 200, 200, true);
+                using Image image = pdf.SaveAsImage(i);
 
-                string outputFile = Path.Combine(
+                string outputPath = Path.Combine(
                     outputDir,
-                    $"page_{i + 1}.jpg"
+                    $"{baseName}_page_{i + 1}.jpg"
                 );
 
-                img.Save(outputFile, ImageFormat.Jpeg);
+                image.Save(outputPath, ImageFormat.Jpeg);
 
                 if (i == 0)
-                    firstImage = outputFile;
+                    firstImage = outputPath;
             }
 
-            return firstImage;
+            return firstImage; // giữ đúng contract của cách 1
         }
     }
 }

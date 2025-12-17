@@ -207,6 +207,8 @@ namespace FileConverterGUI.Converters
             Controls.Add(panelHeaderShadow);
             Controls.Add(panelHeader);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MaximumSize = new Size(900, 520);
             MinimumSize = new Size(900, 520);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;

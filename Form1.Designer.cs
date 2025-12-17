@@ -36,6 +36,8 @@ namespace FileConverterGUI.Converters
             lblTitle = new Label();
             panelHeaderShadow = new Panel();
             panelCard = new Panel();
+            panel2 = new Panel();
+            panel1 = new Panel();
             lblConvertType = new Label();
             panelShadow = new Panel();
             panelHeader.SuspendLayout();
@@ -64,7 +66,7 @@ namespace FileConverterGUI.Converters
             BtnChooseFile.Name = "BtnChooseFile";
             BtnChooseFile.Size = new Size(260, 44);
             BtnChooseFile.TabIndex = 2;
-            BtnChooseFile.Text = "📂 Chọn file";
+            BtnChooseFile.Text = "📂 Choose file";
             BtnChooseFile.UseVisualStyleBackColor = false;
             BtnChooseFile.Click += BtnChooseFile_Click;
             // 
@@ -91,9 +93,9 @@ namespace FileConverterGUI.Converters
             lblFile.ForeColor = Color.FromArgb(107, 114, 128);
             lblFile.Location = new Point(25, 175);
             lblFile.Name = "lblFile";
-            lblFile.Size = new Size(660, 20);
+            lblFile.Size = new Size(660, 38);
             lblFile.TabIndex = 3;
-            lblFile.Text = "Chưa chọn file";
+            lblFile.Text = "No file chosen";
             lblFile.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panelHeader
@@ -145,6 +147,8 @@ namespace FileConverterGUI.Converters
             panelCard.Anchor = AnchorStyles.Bottom;
             panelCard.BackColor = Color.WhiteSmoke;
             panelCard.BorderStyle = BorderStyle.FixedSingle;
+            panelCard.Controls.Add(panel2);
+            panelCard.Controls.Add(panel1);
             panelCard.Controls.Add(lblConvertType);
             panelCard.Controls.Add(cbConvertType);
             panelCard.Controls.Add(BtnChooseFile);
@@ -155,6 +159,22 @@ namespace FileConverterGUI.Converters
             panelCard.Padding = new Padding(25);
             panelCard.Size = new Size(720, 340);
             panelCard.TabIndex = 0;
+            // 
+            // panel2
+            // 
+            panel2.BackColor = Color.DimGray;
+            panel2.Location = new Point(110, 216);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(500, 1);
+            panel2.TabIndex = 6;
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.DimGray;
+            panel1.Location = new Point(160, 100);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(400, 1);
+            panel1.TabIndex = 5;
             // 
             // lblConvertType
             // 
@@ -197,5 +217,7 @@ namespace FileConverterGUI.Converters
             panelCard.PerformLayout();
             ResumeLayout(false);
         }
+        private Panel panel1;
+        private Panel panel2;
     }
 }
